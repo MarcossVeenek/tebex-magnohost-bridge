@@ -5,12 +5,14 @@ app.use(express.json());
 
 const PAINEL_URL = 'https://painel.magnohost.com.br';
 const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
-const SERVER_ID = '3b2bb7d0'
-app.post('/tebex-webhook', async (req, res) => {
+const SERVER_ID = '3b2bb7d0';
+
+app.all('/tebex-webhook', async (req, res) => {
   const evento = req.body;
 
-  if (evento.type === 'validation.webhook') {
-    return res.status(200).json({ id: evento.id });
+  // Responde imediatamente a qualquer teste de validação ou GET/POST da Tebex
+  if (req.method === 'GET' || evento.type === 'validation.webhook' || !evento.type) {
+    return res.status(200).json({ status: 'success', id: evento.id || 'ok' });
   }
 
   if (evento.type === 'payment.completed') {
@@ -44,7 +46,7 @@ app.post('/tebex-webhook', async (req, res) => {
     }
   }
 
-  res.sendStatus(200);
+  return res.sendStatus(200);
 });
 
 const PORT = process.env.PORT || 3000;
