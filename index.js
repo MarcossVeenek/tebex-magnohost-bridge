@@ -5,7 +5,7 @@ app.use(express.json());
 
 const PAINEL_URL = 'https://painel.magnohost.com.br';
 const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
-const SERVER_ID = ''3b2bb7d0''
+const SERVER_ID = '3b2bb7d0'
 app.post('/tebex-webhook', async (req, res) => {
   const evento = req.body;
 
