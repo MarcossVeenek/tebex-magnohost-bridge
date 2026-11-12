@@ -11,7 +11,26 @@ const SERVER_ID = '3b2bb7d0';
 app.get('/', (req, res) => {
   res.send('Estou vivo!');
 });
-
+// ROTA DE TESTE (apagar depois)
+app.get('/teste', async (req, res) => {
+  try {
+    await axios.post(
+      `${PAINEL_URL}/api/client/servers/${SERVER_ID}/command`,
+      { command: 'say Teste da ponte funcionando!' },
+      {
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
+    res.send('Comando enviado! Olhe o chat do servidor.');
+  } catch (err) {
+    console.error('[ERRO NO TESTE]', err.response?.data || err.message);
+    res.send('Deu erro. Veja os Logs do Render.');
+  }
+});
 app.post('/webhook', async (req, res) => {
   const evento = req.body;
   console.log('Evento recebido da Tebex:', JSON.stringify(evento, null, 2));
