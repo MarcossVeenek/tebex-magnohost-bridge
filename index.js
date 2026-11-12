@@ -7,8 +7,8 @@ const PAINEL_URL = 'https://painel.magnohost.com.br';
 const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
 const SERVER_ID = '3b2bb7d0';
 
-// Rota raiz que vai receber os eventos da Tebex
-app.post('/', async (req, res) => {
+// Rota específica para a Tebex aceitar e enviar os eventos
+app.post('/webhook', async (req, res) => {
   const evento = req.body;
   console.log('Evento recebido da Tebex:', JSON.stringify(evento, null, 2));
 
