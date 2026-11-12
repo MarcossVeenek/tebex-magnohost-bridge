@@ -7,14 +7,15 @@ const PAINEL_URL = 'https://painel.magnohost.com.br';
 const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
 const SERVER_ID = '3b2bb7d0';
 
-// Rota para capturar webhooks e testes da Tebex
 app.all('/tebex-webhook', async (req, res) => {
   const evento = req.body;
 
-  // Se a Tebex mandar um teste de validação, pegamos o ID do evento e devolvemos exatamente o que ela pede
-  if (req.method === 'GET' || (evento && evento.type === 'validation.webhook')) {
-    const challengeId = evento?.id || req.query?.id || 'ok';
-    return res.status(200).json({ id: challengeId });
+  // Log para sabermos exatamente o que a Tebex está mandando no teste
+  console.log('Recebido da Tebex:', req.method, JSON.stringify(evento));
+
+  // Para qualquer teste de validação ou verificação inicial, respondemos com 200 OK imediatamente
+  if (req.method === 'GET' || (evento && (evento.type === 'validation.webhook' || !evento.type))) {
+    return res.status(200).send('Webhook received');
   }
 
   if (evento && evento.type === 'payment.completed') {
