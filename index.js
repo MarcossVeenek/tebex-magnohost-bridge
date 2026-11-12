@@ -4,25 +4,33 @@ const app = express();
 app.use(express.json());
 
 const PAINEL_URL = 'https://painel.magnohost.com.br';
-const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
+const API_KEY = process.env.API_KEY; // vem do Render (Environment)
 const SERVER_ID = '3b2bb7d0';
+
+// Página de teste: abra a URL do Render no navegador
+app.get('/', (req, res) => {
+  res.send('Estou vivo!');
+});
 
 app.post('/webhook', async (req, res) => {
   const evento = req.body;
   console.log('Evento recebido da Tebex:', JSON.stringify(evento, null, 2));
 
-  // Responde imediatamente para a Tebex não dar timeout
+  // Resposta que a Tebex exige na validação
+  if (evento.type === 'validation.webhook') {
+    return res.json({ id: evento.id });
+  }
+
+  // Responde rápido para a Tebex não dar timeout
   res.status(200).json({ status: 'received' });
 
-  // Verifica se o pagamento foi concluído com sucesso
   if (evento && evento.type === 'payment.completed') {
     const jogador = evento.subject?.customer?.username?.username || 'Player';
     const pacotes = evento.subject?.products || [];
 
     for (const item of pacotes) {
       let comando = '';
-      
-      // Personalize aqui os comandos de acordo com os nomes dos produtos na sua loja
+
       if (item.name.toLowerCase().includes('vip')) {
         comando = `tag "${jogador}" add vip`;
       } else {
