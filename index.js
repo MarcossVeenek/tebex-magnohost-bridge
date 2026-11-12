@@ -7,19 +7,22 @@ const PAINEL_URL = 'https://painel.magnohost.com.br';
 const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
 const SERVER_ID = '3b2bb7d0';
 
-// Rota específica para a Tebex aceitar e enviar os eventos
 app.post('/webhook', async (req, res) => {
   const evento = req.body;
   console.log('Evento recebido da Tebex:', JSON.stringify(evento, null, 2));
 
+  // Responde imediatamente para a Tebex não dar timeout
   res.status(200).json({ status: 'received' });
 
+  // Verifica se o pagamento foi concluído com sucesso
   if (evento && evento.type === 'payment.completed') {
     const jogador = evento.subject?.customer?.username?.username || 'Player';
     const pacotes = evento.subject?.products || [];
 
     for (const item of pacotes) {
       let comando = '';
+      
+      // Personalize aqui os comandos de acordo com os nomes dos produtos na sua loja
       if (item.name.toLowerCase().includes('vip')) {
         comando = `tag "${jogador}" add vip`;
       } else {
@@ -46,5 +49,5 @@ app.post('/webhook', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Ponte rodando na porta ${PORT}`));
