@@ -7,20 +7,13 @@ const PAINEL_URL = 'https://painel.magnohost.com.br';
 const API_KEY = 'ptlc_78yfVLqRppe8g2UICtCLejKkJpCpdxB3f5uMZPWtLh0';
 const SERVER_ID = '3b2bb7d0';
 
-// Rota raiz para teste direto no navegador
-app.get('/', (req, res) => {
-  res.status(200).send('Bridge Tebex-Magnohost Online!');
-});
-
-// Webhook da Tebex
-app.post('/tebex-webhook', async (req, res) => {
+// Rota raiz que vai receber os eventos da Tebex
+app.post('/', async (req, res) => {
   const evento = req.body;
   console.log('Evento recebido da Tebex:', JSON.stringify(evento, null, 2));
 
-  // Responde imediatamente para a Tebex não travar
   res.status(200).json({ status: 'received' });
 
-  // Se for um pagamento concluído, dispara os comandos
   if (evento && evento.type === 'payment.completed') {
     const jogador = evento.subject?.customer?.username?.username || 'Player';
     const pacotes = evento.subject?.products || [];
